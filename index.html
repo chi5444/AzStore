@@ -20,12 +20,23 @@
 
     <div class="nav-search">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="searchInput" placeholder="Rechercher un objet, un Gamepass...">
+      <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Rechercher un objet, un Gamepass...">
     </div>
 
     <nav class="nav-links">
-      <a href="index.html">Boutique</a>
-      <a href="checkout.html">Panier</a>
+      <a href="index.html" data-i18n="navShop">Boutique</a>
+      <a href="checkout.html" data-i18n="navCart">Panier</a>
+      <select id="currencySelect" class="select-mini" aria-label="Devise">
+        <option value="eur">EUR €</option>
+        <option value="usd">USD $</option>
+        <option value="dt">DT</option>
+        <option value="sar">SAR</option>
+      </select>
+      <select id="langSelect" class="select-mini" aria-label="Langue">
+        <option value="fr">FR</option>
+        <option value="en">EN</option>
+        <option value="ar">AR</option>
+      </select>
       <span id="navAuthSlot"></span>
     </nav>
 
@@ -39,9 +50,20 @@
     </button>
   </div>
   <div class="nav-links-mobile" id="navLinksMobile">
-    <a href="index.html">Boutique</a>
-    <a href="checkout.html">Panier</a>
-    <a href="login.html">Se connecter</a>
+    <a href="index.html" data-i18n="navShop">Boutique</a>
+    <a href="checkout.html" data-i18n="navCart">Panier</a>
+    <a href="login.html" data-i18n="navLogin">Se connecter</a>
+    <select id="currencySelectMobile" class="select-mini" aria-label="Devise" style="margin-top:8px;">
+      <option value="eur">EUR €</option>
+      <option value="usd">USD $</option>
+      <option value="dt">DT</option>
+      <option value="sar">SAR</option>
+    </select>
+    <select id="langSelectMobile" class="select-mini" aria-label="Langue" style="margin-top:8px;">
+      <option value="fr">FR</option>
+      <option value="en">EN</option>
+      <option value="ar">AR</option>
+    </select>
   </div>
 </header>
 
@@ -50,21 +72,21 @@
   <div>
     <span class="hero-eyebrow">
       <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
-      Livraison rapide &middot; Paiement sécurisé
+      <span data-i18n="heroEyebrow">Livraison rapide &middot; Paiement sécurisé</span>
     </span>
-    <h1>Tous tes objets <span class="accent">Roblox</span> préférés, au même endroit.</h1>
-    <p class="lead">Limited, Dominus, Robux et Gamepass — sélectionnés, vérifiés et livrés rapidement par AZ Store.</p>
+    <h1><span data-i18n="heroTitlePre">Tous tes objets</span> <span class="accent" data-i18n="heroTitleAccent">Roblox</span> <span data-i18n="heroTitlePost">préférés, au même endroit.</span></h1>
+    <p class="lead" data-i18n="heroLead">Limited, Dominus, Robux et Gamepass — sélectionnés, vérifiés et livrés rapidement par AZ Store.</p>
     <div class="hero-actions">
       <a href="#catalogue" class="btn btn-primary">
-        Voir le catalogue
+        <span data-i18n="heroBtnCatalog">Voir le catalogue</span>
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="register.html" class="btn btn-outline">Créer un compte</a>
+      <a href="register.html" class="btn btn-outline" data-i18n="heroBtnRegister">Créer un compte</a>
     </div>
   </div>
 
   <div class="spotlight">
-    <div class="spotlight-label">Objet en vedette</div>
+    <div class="spotlight-label" data-i18n="spotlightLabel">Objet en vedette</div>
     <div class="spotlight-visual grad-gold">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 2 3 7v6c0 5 4 8.5 9 9 5-.5 9-4 9-9V7l-9-5Z"/><path d="M8 11h8M8 15h5"/></svg>
     </div>
@@ -84,7 +106,7 @@
 
 <!-- ===================== GRID ===================== -->
 <div class="section-title">
-  <h2>Catalogue</h2>
+  <h2 data-i18n="catalogTitle">Catalogue</h2>
   <span class="count" id="resultCount"></span>
 </div>
 <div class="products-grid" id="productsGrid">
@@ -94,11 +116,11 @@
 <!-- ===================== FOOTER ===================== -->
 <footer class="footer">
   <div class="footer-inner">
-    <p>&copy; 2026 AZ Store. Marketplace non affiliée à Roblox Corporation.</p>
+    <p data-i18n="footerCopy">&copy; 2026 AZ Store. Marketplace non affiliée à Roblox Corporation.</p>
     <div class="footer-links">
-      <a href="login.html">Connexion</a>
-      <a href="register.html">Inscription</a>
-      <a href="checkout.html">Panier</a>
+      <a href="login.html" data-i18n="navLogin">Connexion</a>
+      <a href="register.html" data-i18n="createAccount">Inscription</a>
+      <a href="checkout.html" data-i18n="navCart">Panier</a>
     </div>
   </div>
 </footer>
@@ -107,7 +129,7 @@
 <div class="cart-overlay" id="cartOverlay"></div>
 <aside class="cart-drawer" id="cartDrawer">
   <div class="cart-header">
-    <h3>Ton panier</h3>
+    <h3 data-i18n="checkoutCartTitle">Ton panier</h3>
     <button class="cart-close" id="cartClose" aria-label="Fermer">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
@@ -115,15 +137,18 @@
   <div class="cart-items" id="cartItems"></div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
     <div class="cart-total-row">
-      <span>Total</span>
+      <span data-i18n="total">Total</span>
       <span class="amount" id="cartTotalAmount">0.00 €</span>
     </div>
-    <a href="checkout.html" class="btn btn-primary btn-block">Passer la commande</a>
+    <a href="checkout.html" class="btn btn-primary btn-block" data-i18n="confirmOrder">Passer la commande</a>
   </div>
 </aside>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/currency.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/products.js"></script>
 <script src="js/cart.js"></script>

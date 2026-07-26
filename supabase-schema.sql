@@ -18,12 +18,16 @@ create table if not exists public.products (
   category      text not null,                -- ex: "Limited", "Dominus", "Robux", "Gamepass"
   region        text,                         -- ex: "Global", "FR"
   icon          text,                         -- nom d'icône SVG (voir js/products.js)
+  image_url     text,                         -- lien direct vers une image (optionnel, remplace l'icône si présent)
   badge         text,                         -- ex: "Nouveau", "Populaire", "Promo"
   img_class     text,                         -- classe css pour un dégradé/illustration
   in_stock      boolean not null default true,
   description   text,                         -- description longue (page produit)
   created_at    timestamptz not null default now()
 );
+
+-- Si la table existait déjà avant cette mise à jour, on ajoute la colonne :
+alter table public.products add column if not exists image_url text;
 
 -- ============================================
 -- TABLE: orders
@@ -97,21 +101,26 @@ create policy "orders_admin_delete"
 -- ============================================
 -- DONNÉES DE DÉMO (à supprimer/modifier librement)
 -- ============================================
-insert into public.products (game, title, price, old_price, category, region, icon, badge, img_class, in_stock, description)
+insert into public.products (game, title, price, old_price, category, region, icon, image_url, badge, img_class, in_stock, description)
 values
-  ('Roblox', 'Dominus Empyreus', 899.00, 1199.00, 'Limited', 'Global', 'dominus', 'Promo', 'grad-gold', true,
+  ('Roblox', 'Dominus Empyreus', 899.00, 1199.00, 'Limited', 'Global', 'dominus', null, 'Promo', 'grad-gold', true,
    'Le légendaire Dominus Empyreus. Un des chapeaux Limited les plus recherchés de Roblox. Livraison rapide après paiement confirmé.'),
-  ('Roblox', '1000 Robux', 8.50, null, 'Robux', 'Global', 'robux', 'Populaire', 'grad-green', true,
+  ('Roblox', '1000 Robux', 8.50, null, 'Robux', 'Global', 'robux', null, 'Populaire', 'grad-green', true,
    'Recharge de 1000 Robux livrée directement sur votre compte via échange sécurisé ou gamepass.'),
-  ('Roblox', 'Gamepass VIP — Blox Fruits', 4.99, 6.99, 'Gamepass', 'Global', 'gamepass', 'Nouveau', 'grad-teal', true,
+  ('Roblox', 'Gamepass VIP — Blox Fruits', 4.99, 6.99, 'Gamepass', 'Global', 'gamepass', null, 'Nouveau', 'grad-teal', true,
    'Accès VIP au serveur Blox Fruits avec avantages exclusifs. Activation sous 24h.'),
-  ('Roblox', 'Valkyrie Helm', 349.00, null, 'Limited', 'Global', 'helm', null, 'grad-silver', true,
+  ('Roblox', 'Valkyrie Helm', 349.00, null, 'Limited', 'Global', 'helm', null, null, 'grad-silver', true,
    'Le casque Valkyrie, un classique intemporel de la collection Limited.'),
-  ('Roblox', '2500 Robux', 19.90, 22.90, 'Robux', 'Global', 'robux', 'Promo', 'grad-green', true,
+  ('Roblox', '2500 Robux', 19.90, 22.90, 'Robux', 'Global', 'robux', null, 'Promo', 'grad-green', true,
    'Recharge de 2500 Robux. Idéal pour débloquer vos objets préférés.'),
-  ('Roblox', 'Sparkle Time Fedora', 129.00, null, 'Limited', 'Global', 'fedora', null, 'grad-pink', false,
+  ('Roblox', 'Sparkle Time Fedora', 129.00, null, 'Limited', 'Global', 'fedora', null, null, 'grad-pink', false,
    'Le Sparkle Time Fedora, une pièce de collection rare — actuellement en rupture de stock.')
 on conflict do nothing;
+
+-- Astuce : pour ajouter une image à un produit, renseigne un lien direct
+-- (ex: https://exemple.com/image.png) dans le champ "Image (lien URL)" de
+-- l'admin, ou directement dans la colonne image_url. Laisse vide pour
+-- garder l'icône SVG par défaut.
 
 -- ============================================
 -- NOTE IMPORTANTE

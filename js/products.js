@@ -45,14 +45,25 @@ const Products = {
 };
 
 function formatPrice(value) {
+  // Affiche le prix (stocké en EUR en base) dans la devise choisie par le visiteur
+  if (typeof Currency !== "undefined") return Currency.format(Number(value));
+  return `${Number(value).toFixed(2)} €`;
+}
+
+function formatPriceBase(value) {
+  // Toujours en EUR (prix de base tel qu'enregistré) — utilisé dans l'admin
   return `${Number(value).toFixed(2)} €`;
 }
 
 function renderProductCard(p) {
   const outClass = p.in_stock ? "" : "out";
   const badgeHtml = !p.in_stock
-    ? `<span class="card-badge out">Rupture</span>`
+    ? `<span class="card-badge out">${typeof I18n !== "undefined" ? I18n.t("outOfStock") : "Rupture"}</span>`
     : (p.badge ? `<span class="card-badge">${escapeHtml(p.badge)}</span>` : "");
+
+  const imgHtml = p.image_url
+    ? `<img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.title)}" class="card-img" loading="lazy" onerror="this.remove()">`
+    : "";
 
   return `
     <div class="card" data-id="${p.id}">
@@ -60,6 +71,7 @@ function renderProductCard(p) {
         <div class="card-visual ${p.img_class || 'grad-green'}">
           ${badgeHtml}
           ${getIcon(p.icon)}
+          ${imgHtml}
         </div>
         <div class="card-body">
           <span class="card-category">${escapeHtml(p.category)}</span>
@@ -102,13 +114,16 @@ async function loadAndRenderProducts() {
 
   const items = await Products.fetchAll({ category: currentCategory, search: currentSearch });
 
-  document.getElementById("resultCount") && (document.getElementById("resultCount").textContent = `${items.length} objet${items.length > 1 ? "s" : ""}`);
+  const t = (key, fallback) => (typeof I18n !== "undefined" ? I18n.t(key) : fallback);
+
+  document.getElementById("resultCount") && (document.getElementById("resultCount").textContent =
+    `${items.length} ${items.length > 1 ? t("itemsPlural", "objets") : t("itemsSingular", "objet")}`);
 
   if (items.length === 0) {
     grid.innerHTML = `
       <div class="empty-state">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        <p>Aucun objet ne correspond à ta recherche.</p>
+        <p>${t("noResults", "Aucun objet ne correspond à ta recherche.")}</p>
       </div>`;
     return;
   }
@@ -130,7 +145,7 @@ async function initCategoryChips() {
   if (!bar) return;
   const categories = await Products.fetchCategories();
 
-  bar.innerHTML = [`<button class="chip active" data-cat="all">Tous</button>`]
+  bar.innerHTML = [`<button class="chip active" data-cat="all">${typeof I18n !== "undefined" ? I18n.t("all") : "Tous"}</button>`]
     .concat(categories.map(c => `<button class="chip" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`))
     .join("");
 

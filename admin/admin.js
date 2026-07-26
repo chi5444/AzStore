@@ -55,16 +55,21 @@ function renderProductsTable() {
   if (!tbody) return;
 
   if (allProducts.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7">Aucun produit pour le moment.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8">Aucun produit pour le moment.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = allProducts.map(p => `
     <tr>
+      <td>
+        <div style="width:40px;height:40px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border);">
+          ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">` : `<span style="width:20px;height:20px;color:var(--text-faint);">${getIcon(p.icon)}</span>`}
+        </div>
+      </td>
       <td>${escapeHtml(p.title)}</td>
       <td>${escapeHtml(p.category)}</td>
-      <td>${formatPrice(p.price)}</td>
-      <td>${p.old_price ? formatPrice(p.old_price) : "—"}</td>
+      <td>${formatPriceBase(p.price)}</td>
+      <td>${p.old_price ? formatPriceBase(p.old_price) : "—"}</td>
       <td>${p.in_stock ? '<span class="badge-status paid">En stock</span>' : '<span class="badge-status cancelled">Rupture</span>'}</td>
       <td>${escapeHtml(p.badge || "—")}</td>
       <td>
@@ -97,6 +102,7 @@ function openProductModal(id = null) {
   document.getElementById("pRegion").value = p?.region || "Global";
   document.getElementById("pIcon").value = p?.icon || "box";
   document.getElementById("pImgClass").value = p?.img_class || "grad-green";
+  document.getElementById("pImageUrl").value = p?.image_url || "";
   document.getElementById("pBadge").value = p?.badge || "";
   document.getElementById("pDescription").value = p?.description || "";
   document.getElementById("pInStock").checked = p ? p.in_stock : true;
@@ -120,6 +126,7 @@ async function saveProduct(e) {
     region: document.getElementById("pRegion").value.trim(),
     icon: document.getElementById("pIcon").value.trim(),
     img_class: document.getElementById("pImgClass").value.trim(),
+    image_url: document.getElementById("pImageUrl").value.trim() || null,
     badge: document.getElementById("pBadge").value.trim() || null,
     description: document.getElementById("pDescription").value.trim(),
     in_stock: document.getElementById("pInStock").checked
@@ -174,7 +181,7 @@ function renderOrdersTable() {
     <tr>
       <td>${escapeHtml(o.product_title)}</td>
       <td>${escapeHtml(o.contact || "—")}</td>
-      <td>${formatPrice(o.amount)}</td>
+      <td>${formatPriceBase(o.amount)}</td>
       <td>${escapeHtml(o.payment_method || "—")}</td>
       <td>
         <select data-status="${o.id}" class="select-mini">

@@ -45,6 +45,28 @@ international sans le "+" (ex: `212612345678`).
 4. Déploie. C'est tout — aucune variable d'environnement n'est requise
    côté Vercel puisque les clés Supabase sont publiques (clé "anon").
 
+## 6. Devises, paiement, images et langues (nouveautés)
+
+- **Devises** : sélecteur EUR / USD / DT / SAR dans la navbar. Les prix sont
+  stockés en EUR dans Supabase et convertis à l'affichage via des taux fixes
+  définis dans `js/currency.js` (`CURRENCIES`). Ajuste ces taux si besoin.
+- **Paiement par pays** (page `checkout.html`) : un sélecteur "Pays" affiche
+  automatiquement les méthodes disponibles — **Tunisie** → Robux + Paiement à
+  la livraison (La Poste, avec champ adresse) ; **Autre pays** → Robux
+  uniquement. Après confirmation, WhatsApp s'ouvre toujours pour finaliser la
+  coordination avec le client.
+- **Images produit** : dans l'admin (`admin/index.html`), un champ "Image
+  (lien URL)" optionnel permet de coller un lien direct vers une image
+  (colonne `image_url` en base). Si vide, l'icône SVG par défaut est utilisée.
+  Si le lien est cassé, l'icône réapparaît automatiquement.
+- **Langues** : sélecteur FR / EN / AR dans la navbar de toutes les pages
+  publiques. L'arabe bascule automatiquement l'interface en RTL. Les textes
+  fixes de l'interface sont traduits (`js/i18n.js`) ; les données saisies en
+  admin (titres, descriptions, catégories) restent dans la langue où tu les
+  as entrées — pense à les rédiger dans la langue principale de ton public,
+  ou ajoute plusieurs produits si tu veux du contenu multilingue.
+  L'espace admin reste en français uniquement.
+
 ## Structure des fichiers
 
 ```
@@ -57,6 +79,8 @@ admin/index.html    Tableau de bord admin (protégé)
 admin/admin.js       Logique CRUD produits + gestion commandes
 js/supabase.js       Connexion Supabase
 js/config.js         WhatsApp + EmailJS (à personnaliser)
+js/currency.js        Devises (EUR/USD/DT/SAR) et taux de conversion
+js/i18n.js             Traductions FR/EN/AR + gestion RTL
 js/auth.js            Connexion / inscription / déconnexion
 js/products.js       Récupération + affichage des produits, icônes SVG
 js/cart.js            Panier localStorage + tiroir panier
