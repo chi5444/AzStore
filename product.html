@@ -71,28 +71,6 @@
   <!-- rempli par JS -->
 </div>
 
-<!-- Formulaire "Commande rapide" (modal léger) -->
-<div class="modal-overlay" id="quickOrderOverlay">
-  <div class="modal">
-    <h3 data-i18n="quickOrderTitle">Commande rapide</h3>
-    <div class="form-msg" id="quickOrderMsg"></div>
-    <form id="quickOrderForm">
-      <div class="field">
-        <label for="qoContact" data-i18n="contactLabel">Pseudo Roblox ou e-mail de contact</label>
-        <input type="text" id="qoContact" required placeholder="TonPseudoRoblox">
-      </div>
-      <div class="field">
-        <label for="qoMessage" data-i18n="messageLabel">Message (optionnel)</label>
-        <textarea id="qoMessage" placeholder="Précise l'heure souhaitée, une remarque..."></textarea>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-outline btn-block" id="quickOrderCancel" data-i18n="cancel">Annuler</button>
-        <button type="submit" class="btn btn-primary btn-block" id="quickOrderSubmit" data-i18n="sendRequest">Envoyer la demande</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <footer class="footer">
   <div class="footer-inner">
     <p data-i18n="footerCopy">&copy; 2026 AZ Store. Marketplace non affiliée à Roblox Corporation.</p>
@@ -123,7 +101,6 @@
 </aside>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="js/supabase.js"></script>
 <script src="js/config.js"></script>
 <script src="js/currency.js"></script>
@@ -135,13 +112,6 @@
   const params = new URLSearchParams(window.location.search);
   const productId = params.get("id");
   let currentProduct = null;
-
-  function whatsappLink(p) {
-    const text = encodeURIComponent(
-      `Bonjour AZ Store, je suis intéressé(e) par : ${p.title} (${formatPrice(p.price)}). Merci de me contacter.`
-    );
-    return `https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${text}`;
-  }
 
   async function loadProduct() {
     const wrap = document.getElementById("productDetail");
@@ -163,6 +133,7 @@
     document.getElementById("crumbTitle").textContent = p.title;
 
     const t = (key) => I18n.t(key);
+    const robuxLabel = lang === "en" ? "Robux price" : lang === "ar" ? "سعر الروبوكس" : "Prix en Robux";
 
     wrap.innerHTML = `
       <div class="pd-visual ${p.img_class || 'grad-green'}">
@@ -177,6 +148,10 @@
           <span class="now">${formatPrice(p.price)}</span>
           ${p.old_price ? `<span class="old">${formatPrice(p.old_price)}</span>` : ""}
         </div>
+        ${p.robux_price ? `<div class="pd-robux-price" style="display:flex; align-items:center; gap:6px; margin-top:-8px; margin-bottom:16px; font-size:14px; color:var(--text-dim);">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke-width="1.8"><path d="M12 2 2 8.5 12 15l10-6.5L12 2Z"/><path d="M2 15.5 12 22l10-6.5"/><path d="M2 12l10 6.5L22 12"/></svg>
+          <span>${robuxLabel}: <strong>${Number(p.robux_price).toLocaleString(lang === "ar" ? "ar" : lang)} R$</strong></span>
+        </div>` : ""}
         <p class="pd-desc">${escapeHtml(p.description || "—")}</p>
         <div class="pd-meta">
           <div class="pd-meta-item"><span class="label">${t("regionLabel")}</span><span class="val">${escapeHtml(p.region || "Global")}</span></div>
@@ -187,14 +162,6 @@
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
             ${t("addToCart")}
           </button>
-          <button class="btn btn-outline" id="quickOrderBtn" ${!p.in_stock ? "disabled" : ""}>
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-            ${t("quickOrder")}
-          </button>
-          <a href="${whatsappLink(p)}" target="_blank" rel="noopener" class="btn btn-outline" style="${!p.in_stock ? 'pointer-events:none; opacity:.5;' : ''}">
-            <svg class="whatsapp-svg" viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.2-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5-.1-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.4 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.3 0-.1-.2-.2-.4-.3ZM12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.3A10 10 0 1 0 12 2Z"/></svg>
-            ${t("orderWhatsapp")}
-          </a>
         </div>
       </div>
     `;
@@ -203,67 +170,7 @@
       Cart.add(p);
       showToast(I18n.get() === "en" ? "Added to cart" : I18n.get() === "ar" ? "أُضيف إلى السلة" : "Ajouté au panier");
     });
-    document.getElementById("quickOrderBtn")?.addEventListener("click", () => {
-      document.getElementById("quickOrderOverlay").classList.add("open");
-    });
   }
-
-  document.getElementById("quickOrderCancel").addEventListener("click", () => {
-    document.getElementById("quickOrderOverlay").classList.remove("open");
-  });
-
-  document.getElementById("quickOrderForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const msg = document.getElementById("quickOrderMsg");
-    const submitBtn = document.getElementById("quickOrderSubmit");
-    msg.className = "form-msg";
-
-    const contact = document.getElementById("qoContact").value.trim();
-    const note = document.getElementById("qoMessage").value.trim();
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = "...";
-
-    try {
-      await emailjs.send(
-        SITE_CONFIG.emailjs.serviceId,
-        SITE_CONFIG.emailjs.templateId,
-        {
-          product_title: currentProduct.title,
-          price: formatPrice(currentProduct.price),
-          customer_contact: contact,
-          message: note || "-"
-        },
-        { publicKey: SITE_CONFIG.emailjs.publicKey }
-      );
-
-      const user = await Auth.getUser();
-      await supabaseClient.from("orders").insert({
-        user_id: user ? user.id : null,
-        product_id: currentProduct.id,
-        product_title: currentProduct.title,
-        amount: currentProduct.price,
-        status: "pending",
-        payment_method: "commande_rapide",
-        contact
-      });
-
-      msg.textContent = I18n.get() === "en" ? "Request sent successfully. We'll contact you shortly." : I18n.get() === "ar" ? "تم إرسال الطلب بنجاح. سنتواصل معك قريباً." : "Demande envoyée avec succès. Nous te contactons rapidement.";
-      msg.classList.add("show", "success");
-      setTimeout(() => {
-        document.getElementById("quickOrderOverlay").classList.remove("open");
-        msg.className = "form-msg";
-        document.getElementById("quickOrderForm").reset();
-      }, 1500);
-    } catch (err) {
-      console.error(err);
-      msg.textContent = I18n.get() === "en" ? "Could not send the request. Try again or use WhatsApp." : I18n.get() === "ar" ? "تعذر إرسال الطلب. أعد المحاولة أو استخدم واتساب." : "Impossible d'envoyer la demande pour le moment. Réessaie ou utilise WhatsApp.";
-      msg.classList.add("show", "error");
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = I18n.t("sendRequest");
-    }
-  });
 
   loadProduct();
   document.addEventListener("langchange", loadProduct);
