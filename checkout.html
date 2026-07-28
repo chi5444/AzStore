@@ -80,8 +80,8 @@
         <input type="text" id="contactPseudo" required placeholder="TonPseudoRoblox">
       </div>
       <div class="field">
-        <label for="contactEmail" data-i18n="emailLabel">E-mail</label>
-        <input type="email" id="contactEmail" required placeholder="toi@exemple.com">
+        <label for="contactWhatsappDiscord" data-i18n="whatsappDiscordLabel">Numéro WhatsApp ou pseudo Discord</label>
+        <input type="text" id="contactWhatsappDiscord" required placeholder="+216 XX XXX XXX ou TonPseudo#0000">
       </div>
     </div>
 
@@ -146,6 +146,12 @@
       en: "Pay in cash on delivery via Tunisian Post",
       ar: "تدفع نقداً عند الاستلام عبر البريد التونسي"
     }[lang];
+    const ooredooLabel = { fr: "Recharge Ooredoo", en: "Ooredoo credit", ar: "رصيد اوريدو" }[lang];
+    const ooredooSub = {
+      fr: "Paiement via transfert de recharge/crédit Ooredoo",
+      en: "Payment via Ooredoo credit transfer",
+      ar: "الدفع عبر تحويل رصيد اوريدو"
+    }[lang];
 
     const robux = {
       value: "robux", title: robuxLabel, sub: robuxSub,
@@ -155,8 +161,12 @@
       value: "poste", title: posteLabel, sub: posteSub,
       icon: `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7L22 6"/></svg>`
     };
+    const ooredoo = {
+      value: "ooredoo", title: ooredooLabel, sub: ooredooSub,
+      icon: `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M9 18h.01"/><path d="M16 9v6l4 2V7l-4 2Z"/></svg>`
+    };
 
-    return country === "tn" ? [robux, poste] : [robux];
+    return country === "tn" ? [robux, poste, ooredoo] : [robux];
   }
 
   function renderPaymentOptions(country) {
@@ -236,7 +246,7 @@
     const lang = I18n.get();
 
     const pseudo = document.getElementById("contactPseudo").value.trim();
-    const email = document.getElementById("contactEmail").value.trim();
+    const whatsappDiscord = document.getElementById("contactWhatsappDiscord").value.trim();
     const country = document.getElementById("countrySelect").value;
     const payment = document.querySelector('input[name="payment"]:checked')?.value;
     const postAddress = document.getElementById("postAddress").value.trim();
@@ -251,7 +261,7 @@
       error: { fr: "Une erreur est survenue. Réessaie ou contacte-nous sur WhatsApp.", en: "An error occurred. Try again or contact us on WhatsApp.", ar: "حدث خطأ. أعد المحاولة أو تواصل معنا عبر واتساب." }
     };
 
-    if (!pseudo || !email) {
+    if (!pseudo || !whatsappDiscord) {
       msg.textContent = msgs.fillAll[lang];
       msg.classList.add("show", "error");
       return;
@@ -273,7 +283,7 @@
 
     try {
       const countryLabel = I18n.t(country === "tn" ? "tunisia" : "otherCountry");
-      const contactParts = [`${pseudo} (${email})`, `${I18n.t("countryLabel")}: ${countryLabel}`];
+      const contactParts = [`${pseudo} (${whatsappDiscord})`, `${I18n.t("countryLabel")}: ${countryLabel}`];
       if (payment === "poste" && postAddress) contactParts.push(`${I18n.t("postAddressLabel")}: ${postAddress}`);
       const contactStr = contactParts.join(" — ");
 
@@ -297,8 +307,13 @@
       msg.classList.add("show", "success");
 
       // On propose toujours de finaliser/coordonner sur WhatsApp
+      const paymentLabels = {
+        robux: "Robux",
+        poste: lang === "en" ? "Post office" : lang === "ar" ? "البريد" : "Par poste",
+        ooredoo: lang === "en" ? "Ooredoo credit" : lang === "ar" ? "رصيد اوريدو" : "Recharge Ooredoo"
+      };
       const text = encodeURIComponent(
-        `AZ Store — ${items.map(i => i.title).join(", ")} — ${formatPrice(totalBase)}. ${I18n.t("countryLabel")}: ${countryLabel}. ${payment === "poste" ? (lang === "en" ? "Post office" : lang === "ar" ? "البريد" : "Par poste") : "Robux"}. ${pseudo}.`
+        `AZ Store — ${items.map(i => i.title).join(", ")} — ${formatPrice(totalBase)}. ${I18n.t("countryLabel")}: ${countryLabel}. ${paymentLabels[payment] || payment}. ${pseudo}.`
       );
       setTimeout(() => window.open(`https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${text}`, "_blank"), 800);
 
