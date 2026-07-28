@@ -85,25 +85,6 @@
       </div>
     </div>
 
-    <!-- Booking : créneau de livraison -->
-    <div class="checkout-section">
-      <h3>
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span data-i18n="bookingTitle">Créneau de livraison</span>
-      </h3>
-      <p style="margin-bottom:14px; font-size:13px;" data-i18n="bookingDesc">Choisis un jour et une heure où tu seras connecté(e) à Roblox pour recevoir ta commande.</p>
-      <div class="modal-grid">
-        <div class="field full" style="margin-bottom:0;">
-          <label for="bookingDate" data-i18n="dateLabel">Date</label>
-          <input type="date" id="bookingDate" required>
-        </div>
-        <div class="field full" style="margin-bottom:0;">
-          <label for="bookingTime" data-i18n="timeLabel">Heure</label>
-          <input type="time" id="bookingTime" required>
-        </div>
-      </div>
-    </div>
-
     <!-- Pays + Paiement -->
     <div class="checkout-section">
       <h3>
@@ -256,23 +237,21 @@
 
     const pseudo = document.getElementById("contactPseudo").value.trim();
     const email = document.getElementById("contactEmail").value.trim();
-    const date = document.getElementById("bookingDate").value;
-    const time = document.getElementById("bookingTime").value;
     const country = document.getElementById("countrySelect").value;
     const payment = document.querySelector('input[name="payment"]:checked')?.value;
     const postAddress = document.getElementById("postAddress").value.trim();
     const items = Cart.getAll();
 
     const msgs = {
-      fillAll: { fr: "Merci de remplir tous les champs (coordonnées + créneau).", en: "Please fill in all fields (contact details + slot).", ar: "يرجى ملء جميع الحقول (معلومات التواصل + الموعد)." },
+      fillAll: { fr: "Merci de remplir tous les champs.", en: "Please fill in all fields.", ar: "يرجى ملء جميع الحقول." },
       needAddress: { fr: "Merci de renseigner ton adresse postale pour la livraison via La Poste.", en: "Please provide your postal address for delivery via the Post office.", ar: "يرجى إدخال عنوانك البريدي للتسليم عبر البريد." },
       emptyCart: { fr: "Ton panier est vide.", en: "Your cart is empty.", ar: "سلتك فارغة." },
       confirming: { fr: "Confirmation...", en: "Confirming...", ar: "جارٍ التأكيد..." },
-      success: { fr: "Commande enregistrée ! Nous te contactons au créneau choisi.", en: "Order saved! We'll contact you at the chosen slot.", ar: "تم تسجيل الطلب! سنتواصل معك في الموعد المختار." },
+      success: { fr: "Commande enregistrée ! Nous te contactons rapidement.", en: "Order saved! We'll contact you shortly.", ar: "تم تسجيل الطلب! سنتواصل معك قريباً." },
       error: { fr: "Une erreur est survenue. Réessaie ou contacte-nous sur WhatsApp.", en: "An error occurred. Try again or contact us on WhatsApp.", ar: "حدث خطأ. أعد المحاولة أو تواصل معنا عبر واتساب." }
     };
 
-    if (!pseudo || !email || !date || !time) {
+    if (!pseudo || !email) {
       msg.textContent = msgs.fillAll[lang];
       msg.classList.add("show", "error");
       return;
@@ -294,7 +273,7 @@
 
     try {
       const countryLabel = I18n.t(country === "tn" ? "tunisia" : "otherCountry");
-      const contactParts = [`${pseudo} (${email})`, `${I18n.t("countryLabel")}: ${countryLabel}`, `${I18n.t("bookingTitle")}: ${date} ${time}`];
+      const contactParts = [`${pseudo} (${email})`, `${I18n.t("countryLabel")}: ${countryLabel}`];
       if (payment === "poste" && postAddress) contactParts.push(`${I18n.t("postAddressLabel")}: ${postAddress}`);
       const contactStr = contactParts.join(" — ");
 
@@ -319,7 +298,7 @@
 
       // On propose toujours de finaliser/coordonner sur WhatsApp
       const text = encodeURIComponent(
-        `AZ Store — ${items.map(i => i.title).join(", ")} — ${formatPrice(totalBase)}. ${I18n.t("countryLabel")}: ${countryLabel}. ${payment === "poste" ? (lang === "en" ? "Post office" : lang === "ar" ? "البريد" : "Par poste") : "Robux"}. ${date} ${time}. ${pseudo}.`
+        `AZ Store — ${items.map(i => i.title).join(", ")} — ${formatPrice(totalBase)}. ${I18n.t("countryLabel")}: ${countryLabel}. ${payment === "poste" ? (lang === "en" ? "Post office" : lang === "ar" ? "البريد" : "Par poste") : "Robux"}. ${pseudo}.`
       );
       setTimeout(() => window.open(`https://wa.me/${SITE_CONFIG.whatsappNumber}?text=${text}`, "_blank"), 800);
 
@@ -334,8 +313,6 @@
   });
 
   renderCheckoutItems();
-  // Date minimum = aujourd'hui
-  document.getElementById("bookingDate").min = new Date().toISOString().split("T")[0];
 </script>
 </body>
 </html>
