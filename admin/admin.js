@@ -55,7 +55,7 @@ function renderProductsTable() {
   if (!tbody) return;
 
   if (allProducts.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8">Aucun produit pour le moment.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9">Aucun produit pour le moment.</td></tr>`;
     return;
   }
 
@@ -70,6 +70,7 @@ function renderProductsTable() {
       <td>${escapeHtml(p.category)}</td>
       <td>${formatPriceBase(p.price)}</td>
       <td>${p.old_price ? formatPriceBase(p.old_price) : "—"}</td>
+      <td>${p.robux_price ? `${Number(p.robux_price).toLocaleString()} R$` : "—"}</td>
       <td>${p.in_stock ? '<span class="badge-status paid">En stock</span>' : '<span class="badge-status cancelled">Rupture</span>'}</td>
       <td>${escapeHtml(p.badge || "—")}</td>
       <td>
@@ -99,6 +100,7 @@ function openProductModal(id = null) {
   document.getElementById("pCategory").value = p?.category || "";
   document.getElementById("pPrice").value = p?.price || "";
   document.getElementById("pOldPrice").value = p?.old_price || "";
+  document.getElementById("pRobuxPrice").value = p?.robux_price || "";
   document.getElementById("pRegion").value = p?.region || "Global";
   document.getElementById("pIcon").value = p?.icon || "box";
   document.getElementById("pImgClass").value = p?.img_class || "grad-green";
@@ -123,6 +125,7 @@ async function saveProduct(e) {
     category: document.getElementById("pCategory").value.trim(),
     price: parseFloat(document.getElementById("pPrice").value),
     old_price: document.getElementById("pOldPrice").value ? parseFloat(document.getElementById("pOldPrice").value) : null,
+    robux_price: document.getElementById("pRobuxPrice").value ? parseFloat(document.getElementById("pRobuxPrice").value) : null,
     region: document.getElementById("pRegion").value.trim(),
     icon: document.getElementById("pIcon").value.trim(),
     img_class: document.getElementById("pImgClass").value.trim(),
