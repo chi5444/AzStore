@@ -5,7 +5,7 @@
 
 const SITE_CONFIG = {
   // Numéro WhatsApp au format international SANS "+", ex: "212612345678"
-  whatsappNumber: "212600000000",
+  whatsappNumber: "+21696672771",
 
   // EmailJS : crée un compte gratuit sur https://www.emailjs.com
   // 1. Ajoute un "Email Service" (ex: Gmail) -> récupère le SERVICE_ID
