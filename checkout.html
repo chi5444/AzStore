@@ -123,6 +123,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="js/supabase.js"></script>
 <script src="js/config.js"></script>
 <script src="js/currency.js"></script>
@@ -302,6 +303,26 @@
       if (error) throw error;
 
       const totalBase = items.reduce((s, i) => s + i.price * i.qty, 0);
+
+      try {
+        await emailjs.send(
+          SITE_CONFIG.emailjs.serviceId,
+          SITE_CONFIG.emailjs.templateId,
+          {
+            product_titles: items.map(i => `${i.title} x${i.qty}`).join(", "),
+            total: formatPrice(totalBase),
+            customer_pseudo: pseudo,
+            customer_contact: whatsappDiscord,
+            country: countryLabel,
+            payment_method: payment,
+            post_address: postAddress || "-"
+          },
+          { publicKey: SITE_CONFIG.emailjs.publicKey }
+        );
+      } catch (emailErr) {
+        console.error("EmailJS error:", emailErr);
+      }
+
       Cart.clear();
       msg.textContent = msgs.success[lang];
       msg.classList.add("show", "success");
