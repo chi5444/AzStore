@@ -14,8 +14,8 @@ const SITE_CONFIG = {
   //    -> récupère le TEMPLATE_ID
   // 3. Dans "Account > General" récupère la PUBLIC_KEY
   emailjs: {
-    publicKey: "YOUR_EMAILJS_PUBLIC_KEY",
-    serviceId: "YOUR_EMAILJS_SERVICE_ID",
-    templateId: "YOUR_EMAILJS_TEMPLATE_ID"
+    publicKey: "arIxwdmA8vc1TmvhP",
+    serviceId: "service_sz3k3hs",
+    templateId: "template_n8ey51b"
   }
 };
